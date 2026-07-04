@@ -11,6 +11,9 @@ members = [
     "services/workers",
     "packages/anthropic-client",
     "packages/contracts",
+    "packages/gateway",
+    "packages/eventbus",
+    "packages/audit",
 ]
 
 [dependency-groups]
@@ -19,6 +22,9 @@ dev = [
     "httpx>=0.27",
     "psycopg[binary]>=3.1",
     "ruff>=0.5",
+    "hypothesis>=6.100",
+    "fakeredis>=2.23",
+    "jsonschema>=4.22",
 ]
 
 [tool.pytest.ini_options]

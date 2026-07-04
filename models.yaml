@@ -29,3 +29,18 @@ routing:
 
 fallbacks:
   fable: opus   # refusal / budget / availability → degrade with flag (01 §4.1)
+
+# Pricing ($ per MTok in/out) for the budget guard's pre-flight estimate (01 §4.1.3).
+# Fable pricing is from PRD §10; others are current list prices — config, adjust freely.
+pricing:
+  fable: { input: 10.0, output: 50.0 }
+  opus: { input: 15.0, output: 75.0 }
+  sonnet: { input: 3.0, output: 15.0 }
+  haiku: { input: 1.0, output: 5.0 }
+
+# Helicone-enforced per-student monthly ceilings, USD (PRD §10). Budgets are config, not code.
+budgets:
+  fable: 28.0
+  sonnet: 9.0
+  haiku: 1.0
+

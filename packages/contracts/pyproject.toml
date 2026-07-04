@@ -3,7 +3,10 @@ name = "spykt-contracts"
 version = "0.0.1"
 description = "JSON Schemas for SpecialistInput/Output + per-agent results (01-TECH_SPEC §5) — generated in Phase 1"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "pydantic>=2.7",
+    "jsonschema>=4.22",
+]
 
 [build-system]
 requires = ["hatchling"]
