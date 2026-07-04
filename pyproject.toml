@@ -14,6 +14,7 @@ members = [
     "packages/gateway",
     "packages/eventbus",
     "packages/audit",
+    "packages/notify",
 ]
 
 [dependency-groups]

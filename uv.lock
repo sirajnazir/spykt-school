@@ -10,6 +10,7 @@ members = [
     "spykt-contracts",
     "spykt-eventbus",
     "spykt-gateway",
+    "spykt-notify",
     "spykt-orchestrator",
     "spykt-school",
     "spykt-workers",
@@ -1428,9 +1429,34 @@ requires-dist = [
 ]
 
 [[package]]
+name = "spykt-notify"
+version = "0.0.1"
+source = { editable = "packages/notify" }
+dependencies = [
+    { name = "httpx" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "httpx", specifier = ">=0.27" }]
+
+[[package]]
 name = "spykt-orchestrator"
 version = "0.0.1"
 source = { editable = "services/orchestrator" }
+dependencies = [
+    { name = "pyyaml" },
+    { name = "spykt-audit" },
+    { name = "spykt-contracts" },
+    { name = "spykt-eventbus" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pyyaml", specifier = ">=6.0" },
+    { name = "spykt-audit", editable = "packages/audit" },
+    { name = "spykt-contracts", editable = "packages/contracts" },
+    { name = "spykt-eventbus", editable = "packages/eventbus" },
+]
 
 [[package]]
 name = "spykt-school"
@@ -1465,6 +1491,22 @@ dev = [
 name = "spykt-workers"
 version = "0.0.1"
 source = { editable = "services/workers" }
+dependencies = [
+    { name = "spykt-anthropic-client" },
+    { name = "spykt-audit" },
+    { name = "spykt-contracts" },
+    { name = "spykt-eventbus" },
+    { name = "spykt-notify" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "spykt-anthropic-client", editable = "packages/anthropic-client" },
+    { name = "spykt-audit", editable = "packages/audit" },
+    { name = "spykt-contracts", editable = "packages/contracts" },
+    { name = "spykt-eventbus", editable = "packages/eventbus" },
+    { name = "spykt-notify", editable = "packages/notify" },
+]
 
 [[package]]
 name = "srsly"

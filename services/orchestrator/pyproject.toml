@@ -3,7 +3,17 @@ name = "spykt-orchestrator"
 version = "0.0.1"
 description = "A0 Orchestrator — event consumer + weekly-cycle state machine (01-TECH_SPEC §6) — Railway svc: orchestrator"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "pyyaml>=6.0",
+    "spykt-contracts",
+    "spykt-audit",
+    "spykt-eventbus",
+]
+
+[tool.uv.sources]
+spykt-contracts = { workspace = true }
+spykt-audit = { workspace = true }
+spykt-eventbus = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

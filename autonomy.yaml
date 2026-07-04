@@ -1,0 +1,32 @@
+# Autonomy Ladder (PRD §6.1) — action class → required consent level. Config, not code.
+# Enforcement is SERVER-SIDE in the Orchestrator (01-TECH_SPEC §6); UI is advisory.
+# Unknown action types FAIL CLOSED (blocked + class-4 escalation) — enforced in code.
+
+levels:
+  L0: autonomous            # agent acts, logs (visible in activity log)
+  L1: student_consent       # agent proposes, student accepts
+  L2: coach_approval        # agent proposes, coach approves diff (48h SLA)
+  L3: parent_plus_coach     # dual sign-off (guardian + coach)
+
+actions:
+  # L0 — autonomous, always audited
+  nudge: L0
+  evidence_filing: L0
+  opportunity_surfacing: L0
+  digest_email: L0
+
+  # L1 — student consent
+  weekly_plan_commit: L1
+  task_swap: L1
+  session_scheduling: L1
+
+  # L2 — coach approval
+  quarter_roadmap_change: L2
+  spike_thesis_pivot: L2
+  test_prep_strategy_change: L2
+
+  # L3 — parent + coach dual sign-off
+  fee_bearing_application: L3
+  program_enrollment: L3
+  external_submission: L3
+  data_sharing: L3

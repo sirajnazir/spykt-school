@@ -3,7 +3,20 @@ name = "spykt-workers"
 version = "0.0.1"
 description = "Specialist pool (A1 Zuzu, A4 Scout, A5 SPIKE, A6 Curator, A8 Sentinel) + Fable cron jobs — Railway svc: workers"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "spykt-contracts",
+    "spykt-anthropic-client",
+    "spykt-audit",
+    "spykt-eventbus",
+    "spykt-notify",
+]
+
+[tool.uv.sources]
+spykt-contracts = { workspace = true }
+spykt-anthropic-client = { workspace = true }
+spykt-audit = { workspace = true }
+spykt-eventbus = { workspace = true }
+spykt-notify = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]
