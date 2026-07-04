@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spykt.school/contracts/results/a2_genome.schema.json",
+  "title": "GenomeResult",
+  "description": "A2 GenomeScorer result (01-TECH_SPEC §5): ring → subfactor → scored cell. Scores without at least one evidence_ref are schema-invalid — the Verifier rejects them. SHAPE DEVIATION FROM SPEC (flagged for G1 schema review): 01-TECH_SPEC §5 sketches ring names at the top level of the result; this schema nests the ring map under an explicit 'rings' key because dynamic top-level keys cannot coexist with additionalProperties:false on the envelope.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["rings", "sigmoid_admit_probs", "flags"],
+  "properties": {
+    "rings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {"$ref": "#/$defs/subfactor_score"}
+      }
+    },
+    "sigmoid_admit_probs": {
+      "description": "school_tier → admission probability from the sigmoid admission model.",
+      "type": "object",
+      "additionalProperties": {"type": "number", "minimum": 0.0, "maximum": 1.0}
+    },
+    "flags": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "default": []
+    }
+  },
+  "$defs": {
+    "subfactor_score": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score", "confidence", "evidence_refs"],
+      "properties": {
+        "score": {"type": "number"},
+        "confidence": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+        "evidence_refs": {
+          "description": "A score without evidence is invalid: minItems 1 is deliberate and load-bearing.",
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "minItems": 1
+        },
+        "delta_vs_last": {
+          "description": "Delta vs the previous scoring pass; null on the baseline pass.",
+          "type": ["number", "null"],
+          "default": null
+        },
+        "chetty_modifiers_applied": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "default": []
+        }
+      }
+    }
+  }
+}

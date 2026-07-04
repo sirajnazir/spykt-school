@@ -28,7 +28,7 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["services", "packages", "evals", "infra"]
+testpaths = ["services", "packages", "evals", "infra", "tests"]
 
 [tool.ruff]
 line-length = 110

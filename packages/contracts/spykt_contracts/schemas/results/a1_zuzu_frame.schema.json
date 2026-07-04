@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spykt.school/contracts/results/a1_zuzu_frame.schema.json",
+  "title": "ZuzuFrame",
+  "description": "A1 Zuzu trailing structured frame (01-TECH_SPEC §5), parsed post-stream by the Evidence Curator.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["eq_signals", "commitments_made", "followups"],
+  "properties": {
+    "eq_signals": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "default": []
+    },
+    "commitments_made": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "default": []
+    },
+    "wellbeing_flag": {
+      "description": "Optional wellbeing signal: a bare boolean or a structured detail object. Routing to humans is Sentinel/coach work (PRD §6.2 class 1), not Zuzu's.",
+      "anyOf": [
+        {"type": "null"},
+        {"type": "boolean"},
+        {"$ref": "#/$defs/wellbeing_flag_detail"}
+      ],
+      "default": null
+    },
+    "followups": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "default": []
+    }
+  },
+  "$defs": {
+    "wellbeing_flag_detail": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["flagged", "reason"],
+      "properties": {
+        "flagged": {"type": "boolean"},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

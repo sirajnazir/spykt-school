@@ -1,4 +1,8 @@
+import pytest
+import yaml
+
 from spykt_anthropic_client import load_model_config
+from spykt_anthropic_client.config import find_models_yaml
 
 
 def test_pinned_model_strings():
@@ -27,3 +31,23 @@ def test_live_turns_never_touch_fable():
 def test_fable_falls_back_to_opus():
     cfg = load_model_config()
     assert cfg.fallback_for("fable") == "claude-opus-4-8"
+
+
+@pytest.mark.parametrize("missing_section", ["pricing", "budgets"])
+def test_missing_pricing_or_budgets_section_fails_loudly(tmp_path, missing_section):
+    """A models.yaml without pricing/budgets must fail at load, not silently disable the
+    mandatory budget guard (01 §4.1.3 / PRD §10) via empty defaults."""
+    raw = yaml.safe_load(find_models_yaml().read_text())
+    del raw[missing_section]
+    broken = tmp_path / "models.yaml"
+    broken.write_text(yaml.safe_dump(raw))
+
+    with pytest.raises(KeyError):
+        load_model_config(broken)
+
+
+def test_every_budget_ceiling_has_pricing():
+    """Each configured ceiling needs pricing for the pre-flight estimate (01 §4.1.3)."""
+    cfg = load_model_config()
+    for alias in cfg.budgets:
+        assert alias in cfg.pricing, f"budget ceiling for '{alias}' has no pricing"

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spykt.school/contracts/results/a8_sentinel.schema.json",
+  "title": "SentinelResult",
+  "description": "A8 Escalation Sentinel result (01-TECH_SPEC §5). Classes per PRD §6.2; class 1 (wellbeing) bypasses queue ordering and fires push+SMS synchronously.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["class", "severity", "evidence_ref", "recommended_action"],
+  "properties": {
+    "class": {
+      "description": "Escalation class per PRD §6.2 (1 wellbeing, 2 family conflict, 3 integrity, 4 low confidence, 5 model refusal).",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "severity": {"type": "string", "minLength": 1},
+    "evidence_ref": {"type": "string", "minLength": 1},
+    "recommended_action": {"type": "string", "minLength": 1}
+  }
+}

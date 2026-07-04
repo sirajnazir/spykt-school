@@ -2,6 +2,48 @@
 
 > Updated every session per CLAUDE.md §6. Newest session first.
 
+## Session 2026-07-04 — Phase 1 complete → G1 human review window open
+
+**Phase:** 1 — Contracts, Gateway, Client. Built via a 14-agent workflow: 5 parallel build agents
+(disjoint packages) → 5 adversarial spec-compliance verifiers → 4 fix agents (audit needed none).
+
+### Units completed (spec refs)
+- `packages/contracts` (01 §5): 7 JSON Schemas (SpecialistInput/Output + A1/A2/A3/A8/A9 results),
+  pydantic v2 mirrors with layer-agreement guarantees, ≥60% spike-alignment semantic validator,
+  hypothesis round-trip property tests + dual-layer adversarial rejection tests.
+- `packages/anthropic-client` (01 §4.1): all four middlewares in pipeline order — budget guard
+  (pricing/budgets from models.yaml), retention gate on the final model, Fable thinking config
+  (summarized; blocks never parsed), refusal→Opus fallback with classifier-id capture, class-5
+  escalation hook, audit row on every request incl. retries.
+- `packages/gateway` (01 §7): Pseudonymization Gateway v1 — deterministic salted tokens, spaCy NER +
+  regex layers, parent-field stripping with whitelist, attestation with scrub-report hash, restore path.
+- `packages/eventbus` (01 §2): Redis Streams bus, ULID ids, consumer groups, idempotent handling with
+  DedupeStore, XAUTOCLAIM dead-consumer recovery, per-student ordered error mode, dead-lettering.
+- `packages/audit` (01 §3/§10): append-only writers (in-memory + Postgres), DB-gated integration test
+  proving UPDATE/DELETE rejected.
+- `tests/integration`: cross-package G1 story — Gateway scrub → attestation admits Fable call with no
+  raw PII in the request body → audit row; missing/forged attestation blocked before any request.
+
+### Gate status (→G1) — all four criteria green
+- Contract round-trip property tests: ✅ (hypothesis, all 7 models)
+- Retention gate provably blocks unpseudonymized Fable payloads (attestation stripped → raises): ✅
+- Refusal middleware verified against mocked `stop_reason:"refusal"`: ✅ (fallback + flags + 2 audit rows)
+- Audit rows on every model call: ✅ (unit + integration)
+- Suite: 180 passed, 10 skipped locally; +21 DB-gated (RLS + audit) against pgvector Postgres.
+
+### Awaiting human (G1)
+Siraj approves schemas + pseudonymization approach before any real-corpus data is used.
+Review items: DECISIONS_NEEDED D-001 (RLS identity bridge), D-003 (schema deviations, retention-gate
+tension resolution). Note: Phase 2 red-team hardening will further exercise the Gateway; v1 NER is
+honest-but-probabilistic per the spec's residual-risk note.
+
+### Eval dashboard
+- No pinned suites yet (pre-G3). Eval-gate: vacuous pass.
+
+### Model spend (build-time)
+- $0 Anthropic API (all tests run against stubs/mocks). Build-agent token usage this session:
+  ~1.0M subagent tokens via the Phase 1 workflow.
+
 ## Session 2026-07-03/04 — Phase 0 complete (gate passed locally; CI pending first run)
 
 **Phase:** 0 — Skeleton (repo, CI, envs)

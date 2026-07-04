@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spykt.school/contracts/specialist_output.schema.json",
+  "title": "SpecialistOutput",
+  "description": "Output envelope for every specialist run() (01-TECH_SPEC §5). low_confidence never reaches the student; Orchestrator reroutes to the coach queue (PRD §6.2.4).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["job_id", "status", "confidence", "result", "escalate", "audit"],
+  "properties": {
+    "job_id": {"type": "string", "minLength": 1},
+    "status": {"enum": ["ok", "low_confidence", "refused", "error"]},
+    "confidence": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+    "result": {
+      "description": "Per-agent result payload; validated against the agent's own result schema.",
+      "type": "object"
+    },
+    "escalate": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "#/$defs/escalation_directive"}
+      ],
+      "default": null
+    },
+    "audit": {"$ref": "#/$defs/audit_stamp"}
+  },
+  "$defs": {
+    "escalation_directive": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["class", "reason"],
+      "properties": {
+        "class": {
+          "description": "Escalation class per PRD §6.2 (1 wellbeing, 2 family conflict, 3 integrity, 4 low confidence, 5 model refusal).",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "audit_stamp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "prompt_version", "tokens_in", "tokens_out"],
+      "properties": {
+        "model": {"type": "string", "minLength": 1},
+        "prompt_version": {"type": "string", "minLength": 1},
+        "tokens_in": {"type": "integer", "minimum": 0},
+        "tokens_out": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

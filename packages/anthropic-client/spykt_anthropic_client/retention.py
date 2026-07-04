@@ -5,6 +5,17 @@ The client refuses to send any payload to claude-fable-5 unless it carries a
 lives here in the client, not in caller discipline. The full Gateway is Phase 1;
 this module fixes the enforcement seam and its exception type now so nothing
 else can be built around it.
+
+Spec tension, resolved in the safe direction (recorded per prime directive 4):
+PRD §7.1 says an unverifiable-pseudonymization Fable payload "degrades to Opus 4.8
+... logged as a degraded-quality event", while the CLAUDE.md Phase-1 gate (G1)
+requires "attestation stripped -> client raises". This module implements the G1
+behavior: RetentionGateError is raised and never caught-and-continued inside the
+client, so a missing attestation can never silently reach any model. The PRD-style
+degrade-to-Opus-with-logged-event flow is an ORCHESTRATOR responsibility (Phase 3):
+the Orchestrator may catch RetentionGateError, re-route the job to Opus under
+standard retention terms, and write the degraded-quality event. Do NOT weaken this
+gate to absorb that behavior into the client.
 """
 
 from typing import Any

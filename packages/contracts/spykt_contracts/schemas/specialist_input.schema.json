@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spykt.school/contracts/specialist_input.schema.json",
+  "title": "SpecialistInput",
+  "description": "Input envelope for every specialist run() (01-TECH_SPEC §5). Student identity is always the Gateway pseudonym, never a real name.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["job_id", "student_pseudonym", "task", "budget_tokens", "autonomy_ceiling"],
+  "properties": {
+    "job_id": {"type": "string", "minLength": 1},
+    "student_pseudonym": {"type": "string", "minLength": 1},
+    "task": {"type": "string", "minLength": 1},
+    "context_refs": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "default": []
+    },
+    "budget_tokens": {"type": "integer", "minimum": 1},
+    "autonomy_ceiling": {
+      "description": "Autonomy ladder ceiling for any action this job may propose (PRD §6.1).",
+      "enum": ["L0", "L1", "L2", "L3"]
+    }
+  }
+}

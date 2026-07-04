@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spykt.school/contracts/results/a3_planner.schema.json",
+  "title": "PlannerResult",
+  "description": "A3 Pathway Planner result (01-TECH_SPEC §5). Max 5 tasks/week (Jenny cadence: depth over breadth); no minimum — a zero-task week plan is valid (protected weeks, 01-TECH_SPEC §6, suppress tasking while keeping evidence capture open). rationale is required per task. The ≥60% spike-alignment rule is semantic and enforced by spykt_contracts.semantic.validate_planner_result.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["week_plan", "autonomy_level_required", "agenda_seed_for_coach_session"],
+  "properties": {
+    "week_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tasks"],
+      "properties": {
+        "tasks": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/plan_task"},
+          "maxItems": 5
+        }
+      }
+    },
+    "roadmap_diff": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "default": []
+    },
+    "autonomy_level_required": {
+      "description": "Autonomy ladder level the plan diff requires (PRD §6.1).",
+      "enum": ["L0", "L1", "L2", "L3"]
+    },
+    "agenda_seed_for_coach_session": {"type": "string"}
+  },
+  "$defs": {
+    "plan_task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "spike_alignment", "effort_hrs", "evidence_required", "rationale"],
+      "properties": {
+        "title": {"type": "string", "minLength": 1},
+        "spike_alignment": {"type": "string"},
+        "effort_hrs": {"type": "number", "minimum": 0.0},
+        "evidence_required": {"type": "string"},
+        "rationale": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

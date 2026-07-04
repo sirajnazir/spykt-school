@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spykt.school/contracts/results/a9_verifier.schema.json",
+  "title": "VerifierResult",
+  "description": "A9 Verifier result (01-TECH_SPEC §5): outcome of one eval-suite run over another agent's outputs.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["suite", "cases_run", "pass_rate", "failures"],
+  "properties": {
+    "suite": {"type": "string", "minLength": 1},
+    "cases_run": {"type": "integer", "minimum": 0},
+    "pass_rate": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+    "failures": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/verifier_failure"},
+      "default": []
+    }
+  },
+  "$defs": {
+    "verifier_failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case", "expected", "got", "diagnosis"],
+      "properties": {
+        "case": {"type": "string", "minLength": 1},
+        "expected": {
+          "description": "Expected value, JSON-serialized to a string for stable diffing.",
+          "type": "string"
+        },
+        "got": {
+          "description": "Observed value, JSON-serialized to a string for stable diffing.",
+          "type": "string"
+        },
+        "diagnosis": {"type": "string"}
+      }
+    }
+  }
+}
