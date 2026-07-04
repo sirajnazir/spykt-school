@@ -1,0 +1,31 @@
+# Single source of truth for model strings (01-TECH_SPEC §4.3 / GAP-11).
+# Swapping a model is a config change here + a mandatory eval run (CI gate) — never a code change.
+
+models:
+  fable: claude-fable-5
+  opus: claude-opus-4-8
+  sonnet: claude-sonnet-4-6
+  haiku: claude-haiku-4-5-20251001
+  embeddings: voyage-3-large
+
+embeddings:
+  dimensions: 1536
+
+# Per-agent default routing (01-TECH_SPEC §4). Fallback chains are enforced in
+# packages/anthropic-client middleware (Phase 1), reading this file.
+routing:
+  orchestrator: sonnet
+  zuzu_live: sonnet
+  zuzu_nudge: haiku
+  genome_scorer: fable
+  pathway_planner_weekly: fable
+  pathway_planner_amendment: sonnet
+  opportunity_scout: sonnet
+  spike_money: sonnet
+  evidence_curator: haiku
+  narrative_architect: fable
+  sentinel: haiku
+  verifier: fable
+
+fallbacks:
+  fable: opus   # refusal / budget / availability → degrade with flag (01 §4.1)

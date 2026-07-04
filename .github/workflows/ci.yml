@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+        with:
+          python-version: "3.12"
+      - run: uv sync --all-packages
+      - run: uv run ruff check .
+      - run: uv run pytest -q --ignore=infra
+
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+
+  rls-smoke:
+    # Phase 0 gate: cross-student read fails under RLS
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: spykt_test
+        ports: ["55432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 2s
+          --health-timeout 2s
+          --health-retries 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+        with:
+          python-version: "3.12"
+      - run: uv sync --all-packages
+      - run: uv run pytest infra/supabase/tests -q
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:55432/spykt_test
+
+  eval-gate:
+    # 01-TECH_SPEC §9: deploy blocked below suite thresholds. Vacuous pre-G3 (no pinned suites).
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+        with:
+          python-version: "3.12"
+      - run: uv sync --all-packages
+      - run: uv run python evals/run_gate.py
+
+  deploy:
+    # Hello-world deploy to Railway. No-ops with a clear message until RAILWAY_TOKEN is set
+    # (DECISIONS_NEEDED D-002 — provisioning is a human step).
+    if: github.ref == 'refs/heads/main'
+    needs: [python, web, rls-smoke, eval-gate]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Railway (guarded)
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          if [ -z "$RAILWAY_TOKEN" ]; then
+            echo "RAILWAY_TOKEN not configured — skipping deploy (see DECISIONS_NEEDED.md D-002)."
+            exit 0
+          fi
+          npm i -g @railway/cli
+          for svc in api orchestrator workers; do
+            (cd services/$svc && railway up --service $svc --detach)
+          done
+          (cd apps/web && railway up --service web --detach)

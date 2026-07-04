@@ -1,0 +1,13 @@
+[project]
+name = "spykt-workers"
+version = "0.0.1"
+description = "Specialist pool (A1 Zuzu, A4 Scout, A5 SPIKE, A6 Curator, A8 Sentinel) + Fable cron jobs — Railway svc: workers"
+requires-python = ">=3.12"
+dependencies = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["spykt_workers"]
