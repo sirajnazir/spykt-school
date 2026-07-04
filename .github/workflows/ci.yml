@@ -54,7 +54,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: uv sync --all-packages
-      - run: uv run pytest infra/supabase/tests packages/audit/tests -q
+      - run: uv run pytest infra/supabase/tests packages/audit/tests services/orchestrator/tests services/workers/tests -q
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:55432/spykt_test
 

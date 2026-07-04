@@ -2,6 +2,49 @@
 
 > Updated every session per CLAUDE.md §6. Newest session first.
 
+## Session 2026-07-04 (later) — Phase 2 Safety Spine complete → G2 human review window open
+
+**Phase:** 2 — Safety Spine. Built via a 22-agent workflow (G1 approved by Siraj beforehand):
+8 corpus generators → 2 assemblers → 5 builders → 5 adversarial verifiers → 2 fixers, plus inline fixes.
+
+### Units completed (spec refs)
+- **Synthetic wellbeing corpus** (CLAUDE.md Phase 2): 340 cases — 240 class-1 (80 explicit / 80 oblique /
+  80 masked), 20 class-2 family-conflict, 80 negatives incl. 55 idiom hard-negatives; deterministic
+  228/112 train/held-out split; PII-free by construction; `evals/sentinel/`.
+- **A8 Sentinel** (PRD §6.2, 01 §5): Haiku classifier through the Phase 1 client; over-escalates by design;
+  classes 1–3 emit the escalate directive (class-3 fail-open was a verifier catch — fixed); malformed model
+  output → error + class-4 (fails toward humans); held-out-leak guard test; versioned prompt `sentinel-v1`.
+  Recall harness ready (`run_recall.py`, live run = D-005.1).
+- **Gateway red-team** (01 §7): 240 adversarial cases / 532 seeded PII values; hardened gateway from 92.1%
+  baseline to **100% recall** with **zero PII in captured Fable-route request bodies**; gate test in CI;
+  no cases dropped or edited (prime directive 2 held).
+- **Escalation + notify** (PRD §6.2, GAP-08, 02-UIUX §0.3): class-1 fires push+SMS synchronously to assigned
+  coach + on-call with per-recipient failure isolation (verifier catch — an audit outage can no longer
+  suppress alerts); 15-min unack → admin phone tree (idempotent); budgets fail closed, coach channel exempt;
+  Postgres + in-memory stores; everything audited.
+- **Autonomy enforcement** (PRD §6.1, 01 §6): server-side `authorize()` from autonomy.yaml; fail-closed on
+  unknown actions/levels/ids; L3 dual sign-off requires two DISTINCT humans (inline hardening); 22
+  bypass-attempt tests + Postgres integration tests.
+- **Zuzu holding pattern** (PRD §6.2.1, 02-UIUX §2.3, GAP-08): constructible only from a fired escalation;
+  coach-looped-in message has no other code path; static crisis copy flagged PENDING_G2_HUMAN_APPROVAL;
+  coaching-pressure suppression for context assembly.
+- **Cross-unit integration**: class-1 end-to-end (message → Sentinel → escalation → push+SMS to coach+on-call)
+  asserted < 5s locally with the model stubbed (staging re-run = D-005.2).
+
+### Gate status (→G2)
+- Sentinel recall ≥0.98: harness + held-out ready; **live run needs ANTHROPIC_API_KEY (D-005.1)**.
+- Class-1 e2e ≤5s: local analogue ✅; staging pending provisioning (D-005.2).
+- L2/L3 blocked without approval rows: ✅ (bypass-attempt battery, incl. forged roles, cross-subject rows,
+  rejected rows, single-human dual-role).
+- Gateway red-team ≥99.5%: ✅ **100%**; zero PII in Fable bodies: ✅.
+- Human sign-off required: corpus + crisis copy review (D-005.4), Helicone config (D-005.3).
+
+### Suite
+331 passed + 20 skipped (no DB); 94 DB-gated green. Ruff clean.
+
+### Model spend (build-time)
+- $0 Anthropic API. ~1.29M subagent tokens for the Phase 2 workflow.
+
 ## Session 2026-07-04 — Phase 1 complete → G1 human review window open
 
 **Phase:** 1 — Contracts, Gateway, Client. Built via a 14-agent workflow: 5 parallel build agents

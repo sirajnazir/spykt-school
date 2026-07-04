@@ -1,0 +1,75 @@
+{
+  "cases": 240,
+  "dropped_cases": [],
+  "fable_body_leak_detail": [],
+  "fable_body_leaks": 0,
+  "fable_requests_captured": 240,
+  "failures": [],
+  "per_category": {
+    "contact": {
+      "detected": 107,
+      "recall": 1.0,
+      "total": 107
+    },
+    "formats": {
+      "detected": 185,
+      "recall": 1.0,
+      "total": 185
+    },
+    "names": {
+      "detected": 78,
+      "recall": 1.0,
+      "total": 78
+    },
+    "places": {
+      "detected": 162,
+      "recall": 1.0,
+      "total": 162
+    }
+  },
+  "per_kind": {
+    "address": {
+      "detected": 23,
+      "recall": 1.0,
+      "total": 23
+    },
+    "email": {
+      "detected": 38,
+      "recall": 1.0,
+      "total": 38
+    },
+    "handle": {
+      "detected": 29,
+      "recall": 1.0,
+      "total": 29
+    },
+    "id_number": {
+      "detected": 15,
+      "recall": 1.0,
+      "total": 15
+    },
+    "org": {
+      "detected": 81,
+      "recall": 1.0,
+      "total": 81
+    },
+    "person": {
+      "detected": 289,
+      "recall": 1.0,
+      "total": 289
+    },
+    "phone": {
+      "detected": 25,
+      "recall": 1.0,
+      "total": 25
+    },
+    "place": {
+      "detected": 32,
+      "recall": 1.0,
+      "total": 32
+    }
+  },
+  "recall": 1.0,
+  "recall_threshold": 0.995,
+  "seeded_values": 532
+}
